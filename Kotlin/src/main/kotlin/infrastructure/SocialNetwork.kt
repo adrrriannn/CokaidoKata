@@ -1,34 +1,35 @@
 package infrastructure
 
-import domain.Message
-import domain.MessagePublisher
-import domain.User
+import application.PublishMessage
 import application.ReadMessage
+import java.lang.UnsupportedOperationException
 
-class SocialNetwork(val messagePublisher: MessagePublisher, val readMessage: ReadMessage) {
-
-    fun start() = "Introduce a command"
+class SocialNetwork(private val publishMessage: PublishMessage, private val readMessage: ReadMessage) {
 
     fun execute(inputText: String): String {
         val textList = inputText.split("-> ")
 
-        return if(textList.size > 1){
-            publish(textList[0], textList[1])
-            ""
-        }
-        else {
-            val message = readMessage.read(textList[0])
-
-            return if(message.isBlank()) {
-                message
-            } else {
-                "$message (5 minutes ago)"
+        return when(parseCommand(inputText)) {
+            "publish" -> {
+                publishMessage.publish(textList[0], textList[1])
+                ""
             }
+            "read" -> {
+                val message = readMessage.read(textList[0])
+                if (message.isBlank()) {
+                    message
+                } else {
+                    "$message (5 minutes ago)"
+                }
+            }
+            else      -> throw UnsupportedOperationException("noooooooorl")
         }
     }
 
-    private fun publish(username: String, messageToPublish: String) {
-        messagePublisher(User(username), Message(messageToPublish))
-    }
+    private fun parseCommand(inputText: String): Any {
+        val textList = inputText.split("-> ")
+        if(textList.size > 1) return "publish"
 
+        return "read"
+    }
 }

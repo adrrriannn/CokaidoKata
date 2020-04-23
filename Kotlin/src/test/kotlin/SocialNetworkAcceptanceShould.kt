@@ -1,3 +1,4 @@
+import application.PublishMessage
 import application.ReadMessage
 import domain.MessagePublisher
 import domain.MessageReader
@@ -11,16 +12,9 @@ class SocialNetworkAcceptanceShould {
     private val messagePublisher = MessagePublisher(messageRepository)
     private val messageReader = MessageReader(messageRepository)
     private val readMessage = ReadMessage(messageReader)
-    private val socialNetwork = SocialNetwork(messagePublisher, readMessage)
+    private val publishMessage = PublishMessage(messagePublisher)
+    private val socialNetwork = SocialNetwork(publishMessage, readMessage)
 
-    @Test
-    fun `prompt users to introduce commands`() {
-
-        val promptUsersMessage = "Introduce a command"
-
-        val output = socialNetwork.start()
-        assertThat(output).isEqualTo(promptUsersMessage)
-    }
 
     @Test
     fun `read empty line with the user has no posts`() {
