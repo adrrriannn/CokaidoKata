@@ -18,6 +18,14 @@ class SocialNetwork(val messagePublisher: MessagePublisher, val messageReader: M
     }
 
     fun execute(inputText: String): String {
-        return "I love the weather today (5 minutes ago)"
+        val textList = inputText.split("-> ")
+
+        return if(textList.size > 1){
+            publish(textList[0], textList[1])
+            ""
+        }
+        else {
+            read(textList[0])
+        }
     }
 }

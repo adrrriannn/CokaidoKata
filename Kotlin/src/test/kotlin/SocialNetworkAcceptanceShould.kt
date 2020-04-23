@@ -23,6 +23,24 @@ class SocialNetworkAcceptanceShould {
 
         val output = socialNetwork.execute("Alice")
 
-        assertThat(output).isEqualTo("I love the weather today (5 minutes ago)")
+        assertThat(output).isEqualTo("I love the weather today")
     }
+
+    @Test
+    fun `publish another message in Alice's timeline`() {
+        socialNetwork.execute("Alice -> Hello")
+
+        val output = socialNetwork.execute("Alice")
+
+        assertThat(output).isEqualTo("Hello")
+    }
+
+    /*@Test
+    fun `publish a message in a Bob's timeline`() {
+        socialNetwork.execute("Bob -> Damn! We lost!")
+
+        val output = socialNetwork.execute("Bob")
+
+        assertThat(output).isEqualTo("Damn! We lost!")
+    }*/
 }

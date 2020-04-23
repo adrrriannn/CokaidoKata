@@ -5,13 +5,13 @@ interface MessageRepository {
 
 }
 
-class InMemoryMessageRepository: MessageRepository {
-    override fun findByUser(user: User): Posts {
-        throw UnsupportedOperationException()
-    }
+class InMemoryMessageRepository : MessageRepository {
+    private var message = Post(User(""), Message(""))
+
+    override fun findByUser(user: User) = Posts(listOf(message))
 
     override fun save(post: Post) {
-        throw UnsupportedOperationException()
+        message = post
     }
 
 }
