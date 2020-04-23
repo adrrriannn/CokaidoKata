@@ -2,6 +2,7 @@ import application.PublishMessage
 import application.ReadMessage
 import domain.MessagePublisher
 import domain.MessageReader
+import infrastructure.CommandFactory
 import infrastructure.SocialNetwork
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -13,7 +14,8 @@ class SocialNetworkAcceptanceShould {
     private val messageReader = MessageReader(messageRepository)
     private val readMessage = ReadMessage(messageReader)
     private val publishMessage = PublishMessage(messagePublisher)
-    private val socialNetwork = SocialNetwork(publishMessage, readMessage)
+    private val commandFactory = CommandFactory(publishMessage, readMessage)
+    private val socialNetwork = SocialNetwork(commandFactory)
 
 
     @Test

@@ -2,34 +2,40 @@ package infrastructure
 
 import application.PublishMessage
 import application.ReadMessage
-import java.lang.UnsupportedOperationException
 
-class SocialNetwork(private val publishMessage: PublishMessage, private val readMessage: ReadMessage) {
+class SocialNetwork(private val commandFactory: CommandFactory) {
+    fun execute(inputText: String) = commandFactory.buildCommand(inputText).execute()
+}
 
-    fun execute(inputText: String): String {
-        val textList = inputText.split("-> ")
+class CommandFactory(private val publishMessage: PublishMessage, private val readMessage: ReadMessage) {
 
-        return when(parseCommand(inputText)) {
-            "publish" -> {
-                publishMessage.publish(textList[0], textList[1])
-                ""
+    fun buildCommand(text: String): Command {
+        val textList = text.split("-> ")
+        if (textList.size > 1) return Command.Publish(publishMessage, textList[0], textList[1])
+
+        return Command.Read(readMessage, textList[0])
+    }
+}
+
+sealed class Command {
+
+    abstract fun execute(): String
+
+    class Read(private val readMessage: ReadMessage, val user: String) : Command() {
+        override fun execute(): String {
+            val message = readMessage.read(user)
+            return if (message.isBlank()) {
+                message
+            } else {
+                "$message (5 minutes ago)"
             }
-            "read" -> {
-                val message = readMessage.read(textList[0])
-                if (message.isBlank()) {
-                    message
-                } else {
-                    "$message (5 minutes ago)"
-                }
-            }
-            else      -> throw UnsupportedOperationException("noooooooorl")
         }
     }
 
-    private fun parseCommand(inputText: String): Any {
-        val textList = inputText.split("-> ")
-        if(textList.size > 1) return "publish"
-
-        return "read"
+    class Publish(private val publishMessage: PublishMessage, val user: String, val message: String) : Command() {
+        override fun execute(): String {
+            publishMessage.publish(user, message)
+            return ""
+        }
     }
 }
