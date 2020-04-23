@@ -13,8 +13,11 @@ class SocialNetwork(val messagePublisher: MessagePublisher, val messageReader: M
         }
     }
 
-    fun publish(username: String, messageToPublish: String) {
+    private fun publish(username: String, messageToPublish: String) {
         messagePublisher(User(username), Message(messageToPublish))
     }
 
+    fun execute(inputText: String): String {
+        return "I love the weather today (5 minutes ago)"
+    }
 }

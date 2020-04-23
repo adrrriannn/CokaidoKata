@@ -18,20 +18,11 @@ class SocialNetworkAcceptanceShould {
     }
 
     @Test
-    fun `publish a message in a timeline`() {
+    fun `publish a message in Alice's timeline`() {
+        socialNetwork.execute("Alice -> I love the weather today")
 
-        val messageToPublish = "I love the weather today"
-        val messageTimestamp = "(5 minutes ago)"
+        val output = socialNetwork.execute("Alice")
 
-        val expectedOutput = "$messageToPublish $messageTimestamp"
-
-        val person = "Alice"
-
-        socialNetwork.publish(person, messageToPublish)
-
-        val output = socialNetwork.read(person)
-
-        assertThat(output).isEqualTo(expectedOutput)
+        assertThat(output).isEqualTo("I love the weather today (5 minutes ago)")
     }
-
 }

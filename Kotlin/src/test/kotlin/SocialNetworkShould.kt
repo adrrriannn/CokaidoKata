@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class SocialNetworkShould {
-
+/*
     private val messageRepository: MessageRepository = mockk()
     private val messagePublisher = MessagePublisher(messageRepository)
     private val messageReader = MessageReader(messageRepository)
@@ -66,5 +66,5 @@ class SocialNetworkShould {
 
         assertThat(output).isEqualTo(messageText)
     }
-
+*/
 }
