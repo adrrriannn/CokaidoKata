@@ -25,7 +25,7 @@ class SocialNetwork(val messagePublisher: MessagePublisher, val messageReader: M
             ""
         }
         else {
-            read(textList[0])
+            read(textList[0]) + " (5 minutes ago)"
         }
     }
 }
