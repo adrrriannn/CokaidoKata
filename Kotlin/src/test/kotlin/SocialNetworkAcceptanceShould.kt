@@ -1,3 +1,7 @@
+import application.ReadMessage
+import domain.MessagePublisher
+import domain.MessageReader
+import infrastructure.SocialNetwork
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -6,7 +10,8 @@ class SocialNetworkAcceptanceShould {
     private val messageRepository = InMemoryMessageRepository()
     private val messagePublisher = MessagePublisher(messageRepository)
     private val messageReader = MessageReader(messageRepository)
-    private val socialNetwork = SocialNetwork(messagePublisher, messageReader)
+    private val readMessage = ReadMessage(messageReader)
+    private val socialNetwork = SocialNetwork(messagePublisher, readMessage)
 
     @Test
     fun `prompt users to introduce commands`() {
@@ -15,6 +20,12 @@ class SocialNetworkAcceptanceShould {
 
         val output = socialNetwork.start()
         assertThat(output).isEqualTo(promptUsersMessage)
+    }
+
+    @Test
+    fun `read empty line with the user has no posts`() {
+        val output = socialNetwork.execute("Pepito")
+        assertThat(output).isEqualTo("")
     }
 
     @Test

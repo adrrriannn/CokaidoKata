@@ -1,3 +1,8 @@
+import domain.Message
+import domain.Post
+import domain.Posts
+import domain.User
+
 interface MessageRepository {
     fun save(post: Post)
     fun findByUser(user: User): Posts
