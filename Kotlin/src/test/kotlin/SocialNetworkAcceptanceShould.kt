@@ -1,3 +1,9 @@
+import application.PublishMessage
+import application.ReadMessage
+import domain.MessagePublisher
+import domain.MessageReader
+import infrastructure.CommandFactory
+import infrastructure.SocialNetwork
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -6,32 +12,42 @@ class SocialNetworkAcceptanceShould {
     private val messageRepository = InMemoryMessageRepository()
     private val messagePublisher = MessagePublisher(messageRepository)
     private val messageReader = MessageReader(messageRepository)
-    private val socialNetwork = SocialNetwork(messagePublisher, messageReader)
+    private val readMessage = ReadMessage(messageReader)
+    private val publishMessage = PublishMessage(messagePublisher)
+    private val commandFactory = CommandFactory(publishMessage, readMessage)
+    private val socialNetwork = SocialNetwork(commandFactory)
+
 
     @Test
-    fun `prompt users to introduce commands`() {
-
-        val promptUsersMessage = "Introduce a command"
-
-        val output = socialNetwork.start()
-        assertThat(output).isEqualTo(promptUsersMessage)
+    fun `read empty line with the user has no posts`() {
+        val output = socialNetwork.execute("Pepito")
+        assertThat(output).isEqualTo("")
     }
 
     @Test
-    fun `publish a message in a timeline`() {
+    fun `publish a message in Alice's timeline`() {
+        socialNetwork.execute("Alice -> I love the weather today")
 
-        val messageToPublish = "I love the weather today"
-        val messageTimestamp = "(5 minutes ago)"
+        val output = socialNetwork.execute("Alice")
 
-        val expectedOutput = "$messageToPublish $messageTimestamp"
-
-        val person = "Alice"
-
-        socialNetwork.publish(person, messageToPublish)
-
-        val output = socialNetwork.read(person)
-
-        assertThat(output).isEqualTo(expectedOutput)
+        assertThat(output).isEqualTo("I love the weather today (5 minutes ago)")
     }
 
+    @Test
+    fun `publish another message in Alice's timeline`() {
+        socialNetwork.execute("Alice -> Hello")
+
+        val output = socialNetwork.execute("Alice")
+
+        assertThat(output).isEqualTo("Hello (5 minutes ago)")
+    }
+
+    @Test
+    fun `publish a message in a Bob's timeline`() {
+        socialNetwork.execute("Bob -> Damn! We lost!")
+
+        val output = socialNetwork.execute("Bob")
+
+        assertThat(output).isEqualTo("Damn! We lost! (5 minutes ago)")
+    }
 }
